@@ -1,11 +1,15 @@
 require("aeslua");
-ss = "1234123412341234";
---ss = "12341234123412341234123412341234";
+
+sb = "1234123412 3412341234";
+--sb = "12341234123412341234123412341234";
+print(sb);
+print(string.len(sb));
+local ss=aeslua.fillpad(sb);
 print(ss);
-print(string.len(ss));
 aa = aeslua.encrypt_np("password",ss);
 print(aa);
 print(string.len(aa));
 bb = aeslua.decrypt_np("password",aa);
-print(bb);
-print(string.len(bb));
+cc = aeslua.strippad(bb);
+print(cc);
+print(string.len(cc));

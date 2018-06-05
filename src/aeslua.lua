@@ -43,6 +43,37 @@ function private.pwToKey(password, keyLength)
     return {string.byte(password,1,#password)};
 end
 
+function public.strippad(str)
+local len=string.len(str);
+local index=0;
+for i= len, 1,-1 do
+   if str:byte(i,i+1)~=9 then
+         --print(i.."-"..str:byte(i,i+1))
+         index=i;
+         break
+   end
+end
+local some=string.sub(str, 1, index)
+--print(some);
+return some;
+end
+
+function public.fillpad(key)
+local len=string.len(key);
+local tkey=string.sub(key, 0,len)
+local tfilllen=(math.floor(len/16))*16
+--print(tfilllen);
+local filllen=0;
+if(len%16~=0)
+then filllen=tfilllen+16;
+end
+--print(filllen);
+for i = 1 , filllen-len , 1 do  
+        tkey=tkey..'\t'
+end
+--print(tkey);
+return tkey;
+end
 --
 -- Encrypts string data with password password.
 -- password  - the encryption key is generated from this string
