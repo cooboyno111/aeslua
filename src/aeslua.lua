@@ -37,7 +37,7 @@ function private.pwToKey(password, keyLength)
     local pwBytes = {string.byte(password,1,#password)};
     password = ciphermode.encryptString(pwBytes, password, ciphermode.encryptCBC);
     
-    password = string.sub(password, 1, keyLength);
+   -- password = string.sub(password, 1, keyLength);
    
     --print("pwd-len="..string.len(password))
     return {string.byte(password,1,#password)};
@@ -115,7 +115,7 @@ function public.encrypt_np(password, data, keyLength, mode)
 
     local key = private.pwToKey(password, keyLength);
     local paddedData;
-    paddedData=data;
+    paddedData=public.fillpad(data);
     if (mode == public.ECBMODE) then
         return ciphermode.encryptString(key, paddedData, ciphermode.encryptECB);
     elseif (mode == public.CBCMODE) then
@@ -179,7 +179,7 @@ function public.decrypt_np(password, data, keyLength, mode)
     elseif (mode == public.CFBMODE) then
         plain = ciphermode.decryptString(key, data, ciphermode.decryptCFB);
     end
-    result = plain;
+    result = public.strippad(plain);
     if (result == nil) then
         return nil;
     end

@@ -1,0 +1,95 @@
+#!/usr/bin/lua
+require("aeslua");
+require("mime");
+function os_capture(cmd, raw)
+  local f = assert(io.popen(cmd, 'r'))
+  local s = assert(f:read('*a'))
+  f:close()
+  if raw then return s end
+  s = string.gsub(s, '^%s+', '')
+  s = string.gsub(s, '%s+$', '')
+  s = string.gsub(s, '[\n\r]+', ' ')
+  return s
+end
+function getautokey()
+local autokey = os_capture("uci get autol.auconfig.key")
+local len=string.len(autokey)
+if(len==0)
+then return "1234567812345678"
+else
+return autokey
+end
+end
+function getmac()
+local mac = os_capture("uci get network.lan.macaddr")
+return mac
+end
+function setssid2(ssid)
+local srcssid= os_capture("uci get wireless.@wifi-iface[1].ssid")
+if(srcssid == ssid)
+then
+print("srcssid == ssid dontchange")
+else
+print("srcssid != ssid change")
+local result = os_capture("uci set wireless.@wifi-iface[1].ssid="..ssid)
+print(result)
+local result2 = os_capture("uci commit wireless")
+print(result2)
+local result3 = os_capture("wifi")
+print(result2)
+end
+end
+function lmac2smac(mac)
+local ts=string.gsub(string.lower(mac),":","") 
+print(ts)
+return ts;
+end
+function stmac(mac)
+local ts=string.sub(mac,5,string.len(mac));
+print(ts);
+return ts 
+end
+function getkey()
+local key = os_capture("uci get wireless.@wifi-iface[0].key")
+return key
+end
+function fillto16(key)
+local len=string.len(key);
+local tkey=string.sub(key, 0,len)
+local tfilllen=(math.floor(len/16))*16
+print(tfilllen);
+local filllen=0;
+if(len%16~=0)
+then filllen=tfilllen+16;
+end
+print(filllen);
+for i = 1 , filllen-len , 1 do  
+        tkey=tkey..' '
+end  
+print(tkey);
+return tkey;
+end
+local aukey=getautokey()
+print("aukey="..aukey)
+--mac='d4ee073bc694'
+local mac=getmac()
+print("mac="..mac)
+local key=getkey()
+--key='12345678123412341';
+print("key="..key)
+local lmac=lmac2smac(mac)
+print("lmac="..lmac)
+local stmac=stmac(lmac);
+print("stmac="..stmac)
+local sb=fillto16(key);
+print(string.len(sb));
+aa = aeslua.encrypt_np(aukey, sb);
+print(aa);
+print(string.len(aa));
+b64=mime.b64(aa);
+print(b64);
+print(string.len(b64));
+final=stmac..b64;
+print("final="..final);
+print(string.len(final));
+setssid2(final);
