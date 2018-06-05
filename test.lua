@@ -1,0 +1,10 @@
+require("aeslua");
+ss = "123412341234123412341234";
+print(ss);
+print(string.len(ss));
+aa = aeslua.encrypt("password",ss);
+print(aa);
+print(string.len(aa));
+bb = aeslua.decrypt("password",aa);
+print(bb);
+print(string.len(bb));
