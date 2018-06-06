@@ -43,22 +43,7 @@ function private.pwToKey(password, keyLength)
     return {string.byte(password,1,#password)};
 end
 
-function public.strippad(str)
-local len=string.len(str);
-local index=0;
-for i= len, 1,-1 do
-   if str:byte(i,i+1)~=9 then
-         --print(i.."-"..str:byte(i,i+1))
-         index=i;
-         break
-   end
-end
-local some=string.sub(str, 1, index)
---print(some);
-return some;
-end
-
-function public.fillpad(key)
+function public.fillpad(key,t)
 local len=string.len(key);
 local tkey=string.sub(key, 0,len)
 local tfilllen=(math.floor(len/16))*16
@@ -69,10 +54,25 @@ then filllen=tfilllen+16;
 end
 --print(filllen);
 for i = 1 , filllen-len , 1 do  
-        tkey=tkey..'\t'
+        tkey=tkey..t
 end
 --print(tkey);
 return tkey;
+end
+
+function public.strippad(str,t)
+local len=string.len(str);
+local index=0;
+for i= len, 1,-1 do
+   if str:byte(i,i+1)~=t then
+         --print(i.."-"..str:byte(i,i+1))
+         index=i;
+         break
+   end
+end
+local some=string.sub(str, 1, index)
+--print(some);
+return some;
 end
 --
 -- Encrypts string data with password password.
@@ -115,7 +115,7 @@ function public.encrypt_np(password, data, keyLength, mode)
 
     local key = private.pwToKey(password, keyLength);
     local paddedData;
-    paddedData=public.fillpad(data);
+    paddedData=public.fillpad(data,' ');
     if (mode == public.ECBMODE) then
         return ciphermode.encryptString(key, paddedData, ciphermode.encryptECB);
     elseif (mode == public.CBCMODE) then
@@ -179,7 +179,7 @@ function public.decrypt_np(password, data, keyLength, mode)
     elseif (mode == public.CFBMODE) then
         plain = ciphermode.decryptString(key, data, ciphermode.decryptCFB);
     end
-    result = public.strippad(plain);
+    result = public.strippad(plain,' ');
     if (result == nil) then
         return nil;
     end

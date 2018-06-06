@@ -1,5 +1,5 @@
 require("aeslua");
-ss = "123412341234123412341234";
+ss = "1234123412341234";
 print(ss);
 print(string.len(ss));
 aa = aeslua.encrypt("password",ss);
