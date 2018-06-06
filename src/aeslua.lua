@@ -43,6 +43,17 @@ function private.pwToKey(password, keyLength)
     return {string.byte(password,1,#password)};
 end
 
+function public.printstrbyte(name,str)
+local len=string.len(str);
+io.write(name..'=[');
+for i=1,len,1 do
+--for i= len, 1,-1 do
+io.write(str:byte(i,i+1)..',');
+--print(i.."-"..str:byte(i,i+1))
+end
+io.write(']\n');
+end
+
 function public.fillpad(key,t)
 local len=string.len(key);
 local tkey=string.sub(key, 0,len)

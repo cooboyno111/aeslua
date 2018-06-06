@@ -1,10 +1,13 @@
 require("aeslua");
 ss = "12341234123412341234";
+aeslua.printstrbyte("ss",ss);
 print(ss);
 print(string.len(ss));
 aa = aeslua.encrypt_np("password",ss);
+aeslua.printstrbyte("aa",aa);
 print(aa);
 print(string.len(aa));
 bb = aeslua.decrypt_np("password",aa);
+aeslua.printstrbyte("bb",bb);
 print(bb);
 print(string.len(bb));
