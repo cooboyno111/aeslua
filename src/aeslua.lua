@@ -62,9 +62,10 @@ end
 
 function public.strippad(str,t)
 local len=string.len(str);
+--print(t:byte(1,2));
 local index=0;
 for i= len, 1,-1 do
-   if str:byte(i,i+1)~=t then
+   if str:byte(i,i+1)~=t:byte(1,2) then
          --print(i.."-"..str:byte(i,i+1))
          index=i;
          break
